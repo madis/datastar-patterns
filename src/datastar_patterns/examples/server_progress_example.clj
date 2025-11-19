@@ -6,7 +6,7 @@
    [:h1.header.is-size-1 "data-bind"]
    [:div.columns
     [:div.column
-     [:input.input {:data-bind "$speed"}]
+     [:input.input {:type "number" :min 1 :max 100 :value 10 :data-bind "speed"}]
      [:button.button {:data-on:click "@post('/server-actions')"} "Start!"]]
     [:div.column
      [:progress.progress {:value 0 :max 100 :data-attr:value "$server-progress"}]]]

@@ -48,8 +48,9 @@
   (if (d*/datastar-request? req)
     (with-sse req
       (fn [send!]
-        (let [speed (get (get-signals req) :speed)]
+        (let [speed (:speed (get-signals req))
+              time-to-sleep (* (max 1 speed) 10)]
           (doseq [progress (range 101)]
             (send! :signals {:server-progress (str progress)})
-            (Thread/sleep 50)))))
+            (Thread/sleep time-to-sleep)))))
     {:status 200 :body "This endpoint is for datastar SSE connections"}))

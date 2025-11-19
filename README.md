@@ -16,3 +16,6 @@ Different example, uses and design patterns for the fabulous [Datastar](https://
   - open http://localhost:3000
 3. From there on, calling `(user/go!)` function will reload code & restart the web server
 
+## Screenshot
+
+![screenshot](docs/datastar-patterns-screen.png)
