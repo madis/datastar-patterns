@@ -18,4 +18,4 @@ Different example, uses and design patterns for the fabulous [Datastar](https://
 
 ## Screenshot
 
-![screenshot](docs/datastar-patterns-screen.png)
+![screenshot](docs/datastar-patterns-demo.gif)
