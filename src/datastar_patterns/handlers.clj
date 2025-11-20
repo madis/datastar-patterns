@@ -4,10 +4,13 @@
    [datastar-patterns.examples.data-class-example :as data-class-example]
    [datastar-patterns.examples.data-computed-example :as data-computed-example]
    [datastar-patterns.examples.data-on-example :as data-on-example]
-   [datastar-patterns.examples.server-progress-example :as server-progress-example]
+   [datastar-patterns.examples.multiple-sse-receivers-example :as multiple-sse-receivers-example]
    [datastar-patterns.examples.server-patch-mode-example :as server-patch-mode-example]
-   [datastar-patterns.helpers :refer [get-signals with-sse]]
+   [datastar-patterns.examples.server-progress-example :as server-progress-example]
+   [datastar-patterns.helpers :as helpers :refer [get-signals with-sse]]
    [hiccup2.core :as h]
+   [starfederation.datastar.clojure.adapter.common :refer [on-open]]
+   [starfederation.datastar.clojure.adapter.http-kit :refer [->sse-response]]
    [starfederation.datastar.clojure.api :as d*]))
 
 
@@ -42,7 +45,8 @@
                (data-computed-example/present)
                (data-on-example/present)
                (server-progress-example/present)
-               (server-patch-mode-example/present))]
+               (server-patch-mode-example/present)
+               (multiple-sse-receivers-example/present))]
     {:status 200 :body (-> page layout landing-html render-html)}))
 
 (defn- start-progress-example
@@ -62,6 +66,21 @@
            [:div.notification.is-info "Your message was received: " [:strong message]]
            {:patch-mode patch-mode :selector "#target-container"})))
 
+(def sse-connections (atom {}))
+
+(defn- send-to-multiple-example
+  [req send!]
+  (let [message-text (get (get-signals req) :multi-message)
+        message (fn [msg] [:div.notification.is-info "New message: " [:strong msg]])]
+    (doseq [[client-id sse-connection] @sse-connections]
+      (send! :html
+             (message (str "sent to " client-id))
+             {:patch-mode "append" :selector "#sender-messages-container"})
+      (helpers/send! sse-connection
+                     :html
+                     (message message-text)
+                     {:patch-mode "append" :selector "#receiver-messages-container"}))))
+
 (defn server-actions
   [req]
   (if (d*/datastar-request? req)
@@ -70,5 +89,19 @@
         (let [action (get-in req [:params :action])]
           (case action
             "start-progress" (start-progress-example req send!)
-            "patch-mode" (patch-mode-example req send!)))))
+            "patch-mode" (patch-mode-example req send!)
+            "multiple-sse-receivers" (send-to-multiple-example req send!)))))
     {:status 200 :body "This endpoint is for datastar SSE connections"}))
+
+(defn sse-receiver
+  [req]
+  (if (d*/datastar-request? req)
+    (->sse-response req
+                    {on-open (fn [sse]
+                               (swap! sse-connections assoc (get-in req [:params :client-id]) sse))})
+    {:status 200
+     :body (-> {:client-id (get-in req [:params :client-id])}
+               multiple-sse-receivers-example/receiver
+               layout
+               landing-html
+               render-html)}))

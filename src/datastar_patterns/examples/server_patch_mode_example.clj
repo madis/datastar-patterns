@@ -19,4 +19,3 @@
    [:p "Depending on the patch-mode parameter, the HTML sent from the back-end within SSE connection, the DOM will b modified. Here only inner and append patch-modes are demonstrated. The default is 'outer'"]
    [:a {:href "https://data-star.dev/reference/sse_events#datastar-patch-elements"
         :target "_blank"} "datastar-patch-elements documentation"]])
-

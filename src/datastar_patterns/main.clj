@@ -18,6 +18,8 @@
  (rr/router
    [["/" {:get handlers/landing-page}]
     ["/server-actions" {:post handlers/server-actions}]
+    ["/sse-receiver" {:get handlers/sse-receiver
+                      :post handlers/sse-receiver}]
     ["/assets/*" (-> (rr/create-resource-handler)
                      (wrap-cors ,,,
                                 :access-control-allow-origin #".*"
