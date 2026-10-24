@@ -17,6 +17,7 @@
  [deps]
  (rr/router
    [["/" {:get handlers/landing-page}]
+    ["/health" {:get (fn [_] {:status 200 :headers {"content-type" "text/plain"} :body "ok"})}]
     ["/server-actions" {:post handlers/server-actions}]
     ["/sse-receiver" {:get handlers/sse-receiver
                       :post handlers/sse-receiver}]
