@@ -16,4 +16,8 @@
          :extra-deps  {org.clojure/clojure         {:mvn/version "1.12.3"}
                        nrepl/nrepl                 {:mvn/version "1.5.1"}
                        cider/cider-nrepl           {:mvn/version "0.58.0"}
-                       io.github.tonsky/clj-reload {:mvn/version "1.0.0"}}}}}
+                       io.github.tonsky/clj-reload {:mvn/version "1.0.0"}}}
+
+  :build
+  {:deps       {io.github.clojure/tools.build {:mvn/version "0.10.14"}}
+   :ns-default build}}}
